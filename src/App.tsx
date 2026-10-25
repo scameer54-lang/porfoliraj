@@ -105,17 +105,26 @@ function Magnet({ children }: { children: ReactNode }) {
 function LiquidCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const trailRef = useRef<HTMLDivElement>(null)
+  const touchLayerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-    if (!finePointer) return
-    document.documentElement.classList.add('has-liquid-cursor')
+    if (finePointer) document.documentElement.classList.add('has-liquid-cursor')
     let x = -100
     let y = -100
     let trailX = -100
     let trailY = -100
     let frame = 0
     const move = (event: MouseEvent) => { x = event.clientX; y = event.clientY }
+    const press = (event: globalThis.PointerEvent) => {
+      if (event.pointerType === 'mouse' || !touchLayerRef.current) return
+      const ripple = document.createElement('span')
+      ripple.className = 'liquid-touch'
+      ripple.style.left = `${event.clientX}px`
+      ripple.style.top = `${event.clientY}px`
+      ripple.addEventListener('animationend', () => ripple.remove(), { once: true })
+      touchLayerRef.current.appendChild(ripple)
+    }
     const animate = () => {
       trailX += (x - trailX) * 0.14
       trailY += (y - trailY) * 0.14
@@ -123,16 +132,18 @@ function LiquidCursor() {
       if (trailRef.current) trailRef.current.style.transform = `translate3d(${trailX}px, ${trailY}px, 0)`
       frame = requestAnimationFrame(animate)
     }
-    window.addEventListener('mousemove', move, { passive: true })
-    frame = requestAnimationFrame(animate)
+    if (finePointer) window.addEventListener('mousemove', move, { passive: true })
+    window.addEventListener('pointerdown', press, { passive: true })
+    if (finePointer) frame = requestAnimationFrame(animate)
     return () => {
-      window.removeEventListener('mousemove', move)
+      if (finePointer) window.removeEventListener('mousemove', move)
+      window.removeEventListener('pointerdown', press)
       cancelAnimationFrame(frame)
       document.documentElement.classList.remove('has-liquid-cursor')
     }
   }, [])
 
-  return <><div ref={trailRef} className="liquid-cursor liquid-cursor-trail" aria-hidden="true" /><div ref={cursorRef} className="liquid-cursor" aria-hidden="true" /></>
+  return <><div ref={touchLayerRef} className="liquid-touch-layer" aria-hidden="true" /><div ref={trailRef} className="liquid-cursor liquid-cursor-trail" aria-hidden="true" /><div ref={cursorRef} className="liquid-cursor" aria-hidden="true" /></>
 }
 
 function ContactButton({ compact = false }: { compact?: boolean }) {

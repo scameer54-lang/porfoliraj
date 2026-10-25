@@ -11,6 +11,7 @@
 - [x] Implement motion-aware FadeIn, magnetic portrait hover, sticky project-card scaling, passive scroll handling, lazy gallery images, and reduced-motion fallbacks.
 - [x] Add a short Framer Motion loading animation that fades into the responsive portfolio on mobile and desktop.
 - [x] Add a liquid cursor that is limited to fine-pointer devices and does not interfere with touch navigation.
+- [x] Add a #B600A8 liquid press ripple for finger taps on touch devices.
 
 ## Services and projects
 - [x] Present the five supplied service offerings in a white rounded-top section with numbered editorial list treatment.

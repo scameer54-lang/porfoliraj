@@ -23,8 +23,11 @@ img { display: block; max-width: 100%; }
 .preloader-orbit-one { transform: rotate(24deg); }
 .preloader-orbit-two { width: min(23rem, 66vw); height: min(7rem, 19vw); transform: rotate(-32deg); border-color: rgba(182,0,168,.2); }
 .preloader-dot { position: absolute; width: .45rem; height: .45rem; border-radius: 50%; background: #b600a8; box-shadow: 0 0 24px 6px rgba(182,0,168,.45); }
-.liquid-cursor { position: fixed; top: 0; left: 0; z-index: 200; width: .85rem; height: .85rem; margin: -.425rem 0 0 -.425rem; border: 1px solid rgba(255,255,255,.9); border-radius: 50%; background: rgba(215,226,234,.08); pointer-events: none; mix-blend-mode: screen; will-change: transform; }
-.liquid-cursor-trail { z-index: 199; width: 4rem; height: 4rem; margin: -2rem 0 0 -2rem; border: 1px solid rgba(182,0,168,.32); background: radial-gradient(circle, rgba(182,0,168,.28), rgba(118,33,176,.12) 42%, transparent 72%); filter: blur(7px); opacity: .85; }
+.liquid-cursor { position: fixed; top: 0; left: 0; z-index: 200; width: .85rem; height: .85rem; margin: -.425rem 0 0 -.425rem; border: 1px solid rgba(255,255,255,.9); border-radius: 50%; background: rgba(182,0,168,.22); pointer-events: none; mix-blend-mode: screen; will-change: transform; }
+.liquid-cursor-trail { z-index: 199; width: 4rem; height: 4rem; margin: -2rem 0 0 -2rem; border: 1px solid rgba(182,0,168,.42); background: radial-gradient(circle, rgba(182,0,168,.36), rgba(118,33,176,.14) 42%, transparent 72%); filter: blur(7px); opacity: .9; }
+.liquid-touch-layer { position: fixed; inset: 0; z-index: 198; overflow: hidden; pointer-events: none; }
+.liquid-touch { position: absolute; width: 1.1rem; height: 1.1rem; margin: -.55rem 0 0 -.55rem; border: 2px solid #b600a8; border-radius: 50%; background: rgba(182,0,168,.36); box-shadow: 0 0 20px rgba(182,0,168,.7), 0 0 54px rgba(118,33,176,.36); animation: liquidPress .78s cubic-bezier(.22,.8,.26,1) forwards; filter: blur(.2px); }
+@keyframes liquidPress { 0% { opacity: .95; transform: scale(.2); border-radius: 48% 52% 58% 42%; } 42% { opacity: .72; transform: scale(2.3, 1.85); border-radius: 62% 38% 44% 56%; } 100% { opacity: 0; transform: scale(5.5, 4.4); border-radius: 50%; } }
 html.has-liquid-cursor, html.has-liquid-cursor * { cursor: none !important; }
 .hero-heading { background: linear-gradient(180deg, #646973 0%, #bbccd7 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .section-kicker { margin: 0 0 1.25rem; color: rgba(215,226,234,.52); font-size: .72rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; }
