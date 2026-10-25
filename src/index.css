@@ -13,6 +13,16 @@ img { display: block; max-width: 100%; }
 ::selection { color: #0c0c0c; background: #d7e2ea; }
 
 .site-shell { overflow-x: clip; background: #0c0c0c; }
+.preloader { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #0c0c0c; color: #d7e2ea; }
+.preloader-topline { position: absolute; top: 0; left: 0; width: 100%; height: 2px; transform-origin: left center; background: linear-gradient(90deg, #b600a8, #d7e2ea 56%, #be4c00); }
+.preloader-mark { position: relative; z-index: 2; display: grid; width: 4rem; height: 4rem; place-items: center; border: 1px solid rgba(215,226,234,.48); border-radius: 50%; font-size: 1.65rem; font-weight: 700; letter-spacing: -.1em; }
+.preloader-mark i { position: absolute; right: .7rem; bottom: .55rem; color: #cc59d8; font-size: .68rem; font-style: normal; line-height: 1; }
+.preloader-copy { position: absolute; right: 2rem; bottom: 1.75rem; left: 2rem; display: flex; justify-content: space-between; color: rgba(215,226,234,.52); font-size: .65rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; }
+.preloader-copy strong { color: #d7e2ea; font-weight: 500; }
+.preloader-orbit { position: absolute; width: min(28rem, 78vw); height: min(9rem, 24vw); border: 1px solid rgba(215,226,234,.16); border-radius: 50%; }
+.preloader-orbit-one { transform: rotate(24deg); }
+.preloader-orbit-two { width: min(23rem, 66vw); height: min(7rem, 19vw); transform: rotate(-32deg); border-color: rgba(182,0,168,.2); }
+.preloader-dot { position: absolute; width: .45rem; height: .45rem; border-radius: 50%; background: #b600a8; box-shadow: 0 0 24px 6px rgba(182,0,168,.45); }
 .hero-heading { background: linear-gradient(180deg, #646973 0%, #bbccd7 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .section-kicker { margin: 0 0 1.25rem; color: rgba(215,226,234,.52); font-size: .72rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; }
 .dark-kicker { color: rgba(12,12,12,.48); }
@@ -39,7 +49,7 @@ img { display: block; max-width: 100%; }
 .contact-pill { min-width: 11.5rem; padding: .92rem 1.35rem; color: #fff; background: linear-gradient(123deg, #18011f 7%, #b600a8 37%, #7621b0 72%, #be4c00 100%); box-shadow: 0 4px 4px rgba(181,1,167,.25), 4px 4px 12px #7721b1 inset, 0 0 0 2px #fff, 0 0 0 5px #0c0c0c; font-size: .72rem; font-weight: 500; }
 .contact-pill:hover, .live-pill:hover { transform: translateY(-3px); filter: saturate(1.25); }
 .contact-pill--compact { min-width: auto; padding: .8rem 1.1rem; font-size: .67rem; }
-.hero-portrait { position: absolute; z-index: 10; bottom: 0; left: 50%; width: clamp(280px, 38vw, 520px); transform: translateX(-50%); pointer-events: auto; }
+.hero-portrait { position: absolute; z-index: 10; bottom: 0; left: 31%; width: clamp(280px, 38vw, 520px); pointer-events: auto; }
 .hero-portrait img { width: 100%; filter: drop-shadow(0 20px 42px rgba(0,0,0,.42)); }
 .hero-orbit { position: absolute; z-index: -1; border: 1px solid rgba(215,226,234,.11); border-radius: 50%; pointer-events: none; }
 .orbit-one { top: 23%; left: 50%; width: 46rem; height: 14rem; transform: translateX(-50%) rotate(-18deg); }
@@ -112,11 +122,13 @@ img { display: block; max-width: 100%; }
   .project-card { border-radius: 3.1rem; }
 }
 @media (max-width: 700px) {
+  .preloader-copy { right: 1.5rem; bottom: 1.35rem; left: 1.5rem; font-size: .56rem; letter-spacing: .13em; }
+  .preloader-mark { width: 3.4rem; height: 3.4rem; font-size: 1.35rem; }
   .nav-index, .hero-scroll-cue, .services-mark, .projects-note { display: none; }
   .nav-links { gap: .8rem; font-size: .61rem; }
   .hero-title-wrap { align-items: center; padding-top: 0; }
   .hero-title-wrap h1 { font-size: 16vw; transform: rotate(-7deg); }
-  .hero-portrait { bottom: 4.8rem; width: min(84vw, 360px); }
+  .hero-portrait { bottom: 4.8rem; left: 15%; width: min(84vw, 360px); }
   .hero-footer { display: flex; align-items: end; justify-content: space-between; }
   .hero-footer p { max-width: 9rem; font-size: .68rem; }
   .hero-footer .contact-pill { min-width: auto; padding: .72rem .9rem; font-size: .61rem; }

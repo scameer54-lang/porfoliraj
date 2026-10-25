@@ -8,6 +8,7 @@
 - [x] Render all 21 supplied motion GIFs across two scroll-reactive marquee rows, split 11/10, repeated three times for continuous movement in opposite directions.
 - [x] Implement About me corner art, scroll-driven character reveal copy, and a working contact action.
 - [x] Implement motion-aware FadeIn, magnetic portrait hover, sticky project-card scaling, passive scroll handling, lazy gallery images, and reduced-motion fallbacks.
+- [x] Add a short Framer Motion loading animation that fades into the responsive portfolio on mobile and desktop.
 
 ## Services and projects
 - [x] Present the five supplied service offerings in a white rounded-top section with numbered editorial list treatment.

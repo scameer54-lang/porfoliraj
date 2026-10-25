@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent, type ReactNode } from 'react'
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
+import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, MoveDown, Sparkles } from 'lucide-react'
 
 const heroPortrait = 'https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png'
@@ -280,6 +280,30 @@ function ProjectsSection() {
   )
 }
 
+function LoadingScreen() {
+  const [visible, setVisible] = useState(true)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setVisible(false), 1050)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div className="preloader" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }} aria-hidden="true">
+          <motion.div className="preloader-topline" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }} />
+          <div className="preloader-mark"><span>J</span><i>•</i></div>
+          <div className="preloader-copy"><span>Jack — 3D Creator</span><span>Loading / <strong>00</strong></span></div>
+          <motion.div className="preloader-orbit preloader-orbit-one" animate={{ rotate: 360 }} transition={{ duration: 6, repeat: Infinity, ease: 'linear' }} />
+          <motion.div className="preloader-orbit preloader-orbit-two" animate={{ rotate: -360 }} transition={{ duration: 8, repeat: Infinity, ease: 'linear' }} />
+          <motion.div className="preloader-dot" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.35, duration: 0.45, type: 'spring', stiffness: 180 }} />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
 export default function App() {
-  return <main className="site-shell"><HeroSection /><MarqueeSection /><AboutSection /><ServicesSection /><ProjectsSection /></main>
+  return <><LoadingScreen /><main className="site-shell"><HeroSection /><MarqueeSection /><AboutSection /><ServicesSection /><ProjectsSection /></main></>
 }
