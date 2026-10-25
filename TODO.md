@@ -10,6 +10,7 @@
 - [x] Show six supplied public project links: Wonder Events, Event Bid, Eye Trend, Arhuu Outfit, Dharma's Dental, and SLVR Dental & Cosmetic Care.
 - [x] Show the remaining 19 builds as clearly labeled private/unlisted projects with “On request” treatment rather than inventing public links.
 - [x] Include a horizontal live-project showcase plus filters for all 25 projects, the six live projects, and the 19 private projects.
+- [x] Use optimized WebP landing-page screenshots for the six available live links in the main showcase.
 
 ## Positioning and UI
 - [x] Position Raj as a 4th year student interested in app and website building, Meta Ads, and reach marketing.
