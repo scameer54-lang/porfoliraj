@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type PointerEvent, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent, type PointerEvent, type ReactNode } from 'react'
 import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
 import { ArrowDownRight, ArrowUpRight, MoveDown, Sparkles } from 'lucide-react'
 
@@ -102,6 +102,39 @@ function Magnet({ children }: { children: ReactNode }) {
   )
 }
 
+function LiquidCursor() {
+  const cursorRef = useRef<HTMLDivElement>(null)
+  const trailRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    if (!finePointer) return
+    document.documentElement.classList.add('has-liquid-cursor')
+    let x = -100
+    let y = -100
+    let trailX = -100
+    let trailY = -100
+    let frame = 0
+    const move = (event: MouseEvent) => { x = event.clientX; y = event.clientY }
+    const animate = () => {
+      trailX += (x - trailX) * 0.14
+      trailY += (y - trailY) * 0.14
+      if (cursorRef.current) cursorRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`
+      if (trailRef.current) trailRef.current.style.transform = `translate3d(${trailX}px, ${trailY}px, 0)`
+      frame = requestAnimationFrame(animate)
+    }
+    window.addEventListener('mousemove', move, { passive: true })
+    frame = requestAnimationFrame(animate)
+    return () => {
+      window.removeEventListener('mousemove', move)
+      cancelAnimationFrame(frame)
+      document.documentElement.classList.remove('has-liquid-cursor')
+    }
+  }, [])
+
+  return <><div ref={trailRef} className="liquid-cursor liquid-cursor-trail" aria-hidden="true" /><div ref={cursorRef} className="liquid-cursor" aria-hidden="true" /></>
+}
+
 function ContactButton({ compact = false }: { compact?: boolean }) {
   return (
     <a className={`contact-pill ${compact ? 'contact-pill--compact' : ''}`} href="#contact">
@@ -116,6 +149,36 @@ function LiveProjectButton() {
     <a className="live-pill" href="#contact" aria-label="Discuss a live project">
       Live Project <ArrowUpRight size={16} />
     </a>
+  )
+}
+
+function ContactForm() {
+  const [form, setForm] = useState({ name: '', email: '', message: '' })
+  const [status, setStatus] = useState<{ type: 'idle' | 'sending' | 'success' | 'error'; message: string }>({ type: 'idle', message: '' })
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setStatus({ type: 'sending', message: 'Sending your note…' })
+    try {
+      const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.error || 'Please try again.')
+      setForm({ name: '', email: '', message: '' })
+      setStatus({ type: 'success', message: 'Message received — Jack will be in touch.' })
+    } catch (error) {
+      setStatus({ type: 'error', message: error instanceof Error ? error.message : 'Something went wrong. Please try again.' })
+    }
+  }
+
+  return (
+    <form className="contact-form" onSubmit={handleSubmit}>
+      <div className="contact-form-fields">
+        <label><span>Name</span><input required minLength={2} maxLength={80} value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Your name" autoComplete="name" /></label>
+        <label><span>Email</span><input required type="email" maxLength={254} value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} placeholder="you@example.com" autoComplete="email" /></label>
+      </div>
+      <label><span>Project notes</span><textarea required minLength={10} maxLength={4000} rows={4} value={form.message} onChange={(event) => setForm({ ...form, message: event.target.value })} placeholder="Tell me a little about what you are making…" /></label>
+      <div className="contact-form-footer"><button className="contact-submit" type="submit" disabled={status.type === 'sending'}>{status.type === 'sending' ? 'Sending…' : 'Send inquiry'} <ArrowUpRight size={16} /></button>{status.message && <p className={`contact-status contact-status--${status.type}`} role="status">{status.message}</p>}</div>
+    </form>
   )
 }
 
@@ -215,7 +278,8 @@ function HeroSection() {
       </nav>
       <div className="hero-title-wrap">
         <FadeIn y={40} delay={0.15}>
-          <h1 className="hero-heading">Hi, i&apos;m jack</h1>
+          <p className="hero-name-tag">JACK / 3D CREATOR</p>
+          <h1 className="hero-heading">Hi, I&apos;m Jack</h1>
         </FadeIn>
       </div>
       <FadeIn delay={0.35} y={20} className="hero-footer">
@@ -272,8 +336,8 @@ function ProjectsSection() {
       <div className="projects-heading-row"><div><p className="section-kicker">Selected work / 04</p><h2 className="hero-heading section-heading">Project</h2></div><p className="projects-note">Scroll through a few worlds shaped from light, material, and movement.</p></div>
       <div className="projects-stack">{projects.map((project, index) => <ProjectCard key={project.number} project={project} index={index} />)}</div>
       <footer id="contact" className="site-footer">
-        <div><p className="section-kicker">Open for the next good idea / 05</p><h2 className="hero-heading footer-heading">Let&apos;s make<br /><span>something <i>real.</i></span></h2></div>
-        <div className="footer-actions"><ContactButton compact /><a className="footer-mail" href="mailto:hello@jack3d.studio">hello@jack3d.studio <ArrowUpRight size={15} /></a></div>
+        <div className="footer-intro"><p className="section-kicker">Open for the next good idea / 05</p><h2 className="hero-heading footer-heading">Let&apos;s make<br /><span>something <i>real.</i></span></h2><p className="footer-subcopy">Have a project in mind? Send a few notes and let&apos;s shape the first direction together.</p></div>
+        <div className="footer-actions"><ContactButton compact /><ContactForm /></div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Jack — 3D Creator</span><a href="#top">Back to top <ArrowUpRight size={14} /></a></div>
       </footer>
     </section>
@@ -305,5 +369,5 @@ function LoadingScreen() {
 }
 
 export default function App() {
-  return <><LoadingScreen /><main className="site-shell"><HeroSection /><MarqueeSection /><AboutSection /><ServicesSection /><ProjectsSection /></main></>
+  return <><LiquidCursor /><LoadingScreen /><main className="site-shell"><HeroSection /><MarqueeSection /><AboutSection /><ServicesSection /><ProjectsSection /></main></>
 }
