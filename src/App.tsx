@@ -1,120 +1,67 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent, type PointerEvent, type ReactNode } from 'react'
-import { AnimatePresence, motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
-import { ArrowDownRight, ArrowUpRight, MoveDown, Sparkles } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { AnimatePresence, motion, type MotionValue, useScroll, useTransform } from 'framer-motion'
+import { ArrowDownRight, ArrowUpRight, Check, ExternalLink, Instagram, Mail, MapPin, MoveDown, Sparkles } from 'lucide-react'
 
-const heroPortrait = 'https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png'
-const cornerArt = {
-  moon: 'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png',
-  object: 'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png',
-  lego: 'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png',
-  group: 'https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png',
+type Project = {
+  id: number
+  title: string
+  type: string
+  category: string
+  description: string
+  url?: string
+  accent: string
+  live?: boolean
 }
 
-const marqueeImages = [
-  'https://motionsites.ai/assets/hero-space-voyage-preview-eECLH3Yc.gif',
-  'https://motionsites.ai/assets/hero-codenest-preview-Cgppc2qV.gif',
-  'https://motionsites.ai/assets/hero-vex-ventures-preview-BczMFIiw.gif',
-  'https://motionsites.ai/assets/hero-stellar-ai-v2-preview-DjvxjG3C.gif',
-  'https://motionsites.ai/assets/hero-asme-preview-B_nGDnTP.gif',
-  'https://motionsites.ai/assets/hero-transform-data-preview-Cx5OU29N.gif',
-  'https://motionsites.ai/assets/hero-vitara-preview-Cjz2QYyU.gif',
-  'https://motionsites.ai/assets/hero-terra-preview-BFjrCr7T.gif',
-  'https://motionsites.ai/assets/hero-skyelite-preview-DHaZIgUv.gif',
-  'https://motionsites.ai/assets/hero-aethera-preview-DknSlcTa.gif',
-  'https://motionsites.ai/assets/hero-designpro-preview-D8c5_een.gif',
-  'https://motionsites.ai/assets/hero-stellar-ai-preview-D3HL6bw1.gif',
-  'https://motionsites.ai/assets/hero-xportfolio-preview-D4A8maiC.gif',
-  'https://motionsites.ai/assets/hero-orbit-web3-preview-BXt4OttD.gif',
-  'https://motionsites.ai/assets/hero-nexora-preview-cx5HmUgo.gif',
-  'https://motionsites.ai/assets/hero-evr-ventures-preview-DZxeVFEX.gif',
-  'https://motionsites.ai/assets/hero-planet-orbit-preview-DWAP8Z1P.gif',
-  'https://motionsites.ai/assets/hero-new-era-preview-CocuDUm9.gif',
-  'https://motionsites.ai/assets/hero-wealth-preview-B70idl_u.gif',
-  'https://motionsites.ai/assets/hero-luminex-preview-CxOP7ce6.gif',
-  'https://motionsites.ai/assets/hero-celestia-preview-0yO3jXO8.gif',
+const publicProjects: Project[] = [
+  { id: 1, title: 'Wonder Events', type: 'Live website', category: 'Events / booking', description: 'A conversion-first event experience built to make discovery and booking feel effortless.', url: 'https://wondereventstirupati.com/?utm_source=chatgpt.com', accent: 'linear-gradient(135deg,#f4b35d,#e66b4e 48%,#9e3f8c)', live: true },
+  { id: 2, title: 'Event Bid', type: 'Live website', category: 'Events / marketplace', description: 'A bold marketplace concept for discovering event services and making the next move.', url: 'https://eventbid-bj6lsq.v2.appdeploy.ai/?utm_source=chatgpt.com', accent: 'linear-gradient(135deg,#0e365b,#087d8b 48%,#91d8b4)', live: true },
+  { id: 3, title: 'Eye Trend', type: 'Live website', category: 'Optical / commerce', description: 'A clean optical storefront that puts clarity, trust, and product discovery first.', url: 'https://eye-trend-optical-rvj8n0.v2.appdeploy.ai/?utm_source=chatgpt.com', accent: 'linear-gradient(135deg,#d8f3f0,#73b4d4 48%,#3850a3)', live: true },
+  { id: 4, title: 'Arhuu Outfit', type: 'Live website', category: 'Fashion / e-commerce', description: 'A fashion commerce direction for a brand that wants every scroll to feel editorial.', url: 'https://www.arhuuoutfit.com/', accent: 'linear-gradient(135deg,#f8d6c0,#d07775 48%,#673858)', live: true },
+  { id: 5, title: "Dharma's Dental", type: 'Live website', category: 'Dental / healthcare', description: 'A friendly healthcare presence designed to make the first appointment feel simple.', url: 'https://dharmasdental.com/', accent: 'linear-gradient(135deg,#d8f7ed,#74c9b4 48%,#315a70)', live: true },
+  { id: 6, title: 'SLVR Dental & Cosmetic Care', type: 'Live website', category: 'Dental / cosmetic care', description: 'A premium care experience for a clinic balancing trust, clarity, and confident conversion.', url: 'https://slvrdentalandcosmeticcare.in/', accent: 'linear-gradient(135deg,#f7e8cc,#d6a56f 48%,#745477)', live: true },
 ]
 
-const projectImages = [
-  [
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055344_5eff02e0-87a5-41ce-b64f-eb08da8f33db.png&w=1280&q=85',
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055431_11d841fd-8b41-46a5-82e4-b04f2407a7d8.png&w=1280&q=85',
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055451_e317bf2d-28d4-48cc-86b0-6f72f25b6327.png&w=1280&q=85',
-  ],
-  [
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055654_911201c5-36d9-4bc6-bac7-331adfce159f.png&w=1280&q=85',
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055723_5ceda0b8-d9c2-4665-b2e3-83ba19ba76d1.png&w=1280&q=85',
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055753_adc5dcbd-a8e6-49c0-b43a-9b030d835cea.png&w=1280&q=85',
-  ],
-  [
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055759_963cfb0b-4bd1-4b0f-9d0a-09bd6cf95b2f.png&w=1280&q=85',
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_060108_438f781a-9846-4dcc-89ab-c4e6cb830f5b.png&w=1280&q=85',
-    'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260412_055818_9d062121-ad7e-46b9-999a-1a6a692ef1ee.png&w=1280&q=85',
-  ],
-]
+const privateBuildNames = ['Campus Connect', 'Clinic Flow', 'Meta Reach Lab', 'Student Hub', 'Local Commerce', 'Launchpad Ads', 'Event Ops', 'Vision Store', 'Creator Toolkit', 'Study Sprint', 'Service Finder', 'Brand Drop', 'Travel Grid', 'Gym Track', 'Food Order', 'Portfolio Kit', 'Lead Engine', 'Booking Stack', 'Campus Market']
+const privateProjects: Project[] = privateBuildNames.map((title, index) => ({
+  id: index + 7,
+  title,
+  type: 'Private build',
+  category: index % 3 === 0 ? 'App / product' : index % 3 === 1 ? 'Website / brand' : 'Growth / marketing',
+  description: 'Private work not listed publicly. Details and walkthrough available on request.',
+  accent: `linear-gradient(135deg, hsl(${(index * 29 + 195) % 360} 76% 68%), hsl(${(index * 29 + 245) % 360} 72% 45%) 56%, hsl(${(index * 29 + 285) % 360} 70% 28%))`,
+}))
 
+const projects = [...publicProjects, ...privateProjects]
 const services = [
-  ['01', '3D Modeling', 'Creation of detailed objects, characters, or environments tailored to specific client needs, ideal for games, products, and visualizations.'],
-  ['02', 'Rendering', 'High-quality, photorealistic renders that showcase designs with custom lighting, textures, and materials to bring concepts to life.'],
-  ['03', 'Motion Design', 'Dynamic animations and motion graphics that add energy and storytelling to brands, products, and digital experiences.'],
-  ['04', 'Branding', 'Crafting cohesive visual identities — from logos to full brand systems — that communicate a clear and memorable presence.'],
-  ['05', 'Web Design', 'Designing clean, modern, and conversion-focused websites with attention to layout, typography, and user experience.'],
+  ['01', 'Websites', 'High-converting websites with clean structure, strong visual identity, and responsive detail.'],
+  ['02', 'Apps', 'Useful digital products shaped around real people, simple flows, and clear next actions.'],
+  ['03', 'Meta Ads', 'Creative campaigns, landing pages, and testing systems designed to turn attention into reach.'],
+  ['04', 'Reach marketing', 'Reach-focused thinking for brands that need more than a pretty page.'],
+  ['05', 'Automations', 'Small systems that remove repeated work — follow-ups, forms, leads, and handoffs that keep moving.'],
+  ['06', 'Brand systems', 'A practical visual direction so your website, ads, and content feel like the same brand.'],
+  ['07', 'SEO + analytics', 'Search-ready structure and useful measurement so good work has a better chance to be found.'],
 ]
 
-const projects = [
-  { number: '01', name: 'Nextlevel Studio', type: 'Client', blurb: 'A sharp digital world for a studio pushing ideas past the expected.', images: projectImages[0] },
-  { number: '02', name: 'Aura Brand Identity', type: 'Personal', blurb: 'A tactile identity study built from light, texture, and electric color.', images: projectImages[1] },
-  { number: '03', name: 'Solaris Digital', type: 'Client', blurb: 'A warm, forward-looking interface for a new generation of digital products.', images: projectImages[2] },
+const whyUs = [
+  ['A typical handoff', 'A template, a launch link, and a goodbye.', 'A working system with the next useful step already considered.'],
+  ['Website only', 'A page that stops at “live”.', 'Website + content flow + automation-ready foundations.'],
+  ['Marketing', 'Boosts without a clear learning loop.', 'Creative, landing page, and reach thinking connected together.'],
+  ['Support', 'One-size process for every project.', 'Direct, clear, student-builder energy with honest scope.'],
 ]
 
-type FadeInProps = { children: ReactNode; delay?: number; duration?: number; x?: number; y?: number; className?: string }
-
-function FadeIn({ children, delay = 0, duration = 0.7, x = 0, y = 30, className = '' }: FadeInProps) {
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, x, y }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: '50px', amount: 0 }}
-      transition={{ delay, duration, ease: [0.25, 0.1, 0.25, 1] }}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-function Magnet({ children }: { children: ReactNode }) {
-  const [offset, setOffset] = useState({ x: 0, y: 0 })
-  const handleMove = (event: PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect()
-    const x = (event.clientX - rect.left - rect.width / 2) / 3
-    const y = (event.clientY - rect.top - rect.height / 2) / 3
-    setOffset({ x, y })
-  }
-  return (
-    <div
-      onPointerMove={handleMove}
-      onPointerLeave={() => setOffset({ x: 0, y: 0 })}
-      className="will-change-transform"
-      style={{ transform: `translate3d(${offset.x}px, ${offset.y}px, 0)`, transition: offset.x ? 'transform 0.3s ease-out' : 'transform 0.6s ease-in-out' }}
-    >
-      {children}
-    </div>
-  )
+function FadeIn({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
+  return <motion.div className={className} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.18 }} transition={{ duration: .65, delay, ease: [0.22, 1, .36, 1] }}>{children}</motion.div>
 }
 
 function LiquidCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const trailRef = useRef<HTMLDivElement>(null)
   const touchLayerRef = useRef<HTMLDivElement>(null)
-
   useEffect(() => {
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
     if (finePointer) document.documentElement.classList.add('has-liquid-cursor')
-    let x = -100
-    let y = -100
-    let trailX = -100
-    let trailY = -100
-    let frame = 0
+    let x = -100, y = -100, trailX = -100, trailY = -100, frame = 0
     const move = (event: MouseEvent) => { x = event.clientX; y = event.clientY }
     const press = (event: globalThis.PointerEvent) => {
       if (event.pointerType === 'mouse' || !touchLayerRef.current) return
@@ -126,259 +73,83 @@ function LiquidCursor() {
       touchLayerRef.current.appendChild(ripple)
     }
     const animate = () => {
-      trailX += (x - trailX) * 0.14
-      trailY += (y - trailY) * 0.14
-      if (cursorRef.current) cursorRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`
-      if (trailRef.current) trailRef.current.style.transform = `translate3d(${trailX}px, ${trailY}px, 0)`
+      trailX += (x - trailX) * .14
+      trailY += (y - trailY) * .14
+      if (cursorRef.current) cursorRef.current.style.transform = `translate3d(${x}px,${y}px,0)`
+      if (trailRef.current) trailRef.current.style.transform = `translate3d(${trailX}px,${trailY}px,0)`
       frame = requestAnimationFrame(animate)
     }
-    if (finePointer) window.addEventListener('mousemove', move, { passive: true })
+    if (finePointer) { window.addEventListener('mousemove', move, { passive: true }); frame = requestAnimationFrame(animate) }
     window.addEventListener('pointerdown', press, { passive: true })
-    if (finePointer) frame = requestAnimationFrame(animate)
-    return () => {
-      if (finePointer) window.removeEventListener('mousemove', move)
-      window.removeEventListener('pointerdown', press)
-      cancelAnimationFrame(frame)
-      document.documentElement.classList.remove('has-liquid-cursor')
-    }
+    return () => { if (finePointer) window.removeEventListener('mousemove', move); window.removeEventListener('pointerdown', press); cancelAnimationFrame(frame); document.documentElement.classList.remove('has-liquid-cursor') }
   }, [])
-
   return <><div ref={touchLayerRef} className="liquid-touch-layer" aria-hidden="true" /><div ref={trailRef} className="liquid-cursor liquid-cursor-trail" aria-hidden="true" /><div ref={cursorRef} className="liquid-cursor" aria-hidden="true" /></>
-}
-
-function ContactButton({ compact = false }: { compact?: boolean }) {
-  return (
-    <a className={`contact-pill ${compact ? 'contact-pill--compact' : ''}`} href="#contact">
-      <span>Contact Me</span>
-      <ArrowUpRight size={compact ? 15 : 18} strokeWidth={1.8} />
-    </a>
-  )
-}
-
-function LiveProjectButton() {
-  return (
-    <a className="live-pill" href="#contact" aria-label="Discuss a live project">
-      Live Project <ArrowUpRight size={16} />
-    </a>
-  )
 }
 
 function ContactForm() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState<{ type: 'idle' | 'sending' | 'success' | 'error'; message: string }>({ type: 'idle', message: '' })
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setStatus({ type: 'sending', message: 'Sending your note…' })
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); setStatus({ type: 'sending', message: 'Sending…' })
     try {
       const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       const result = await response.json()
       if (!response.ok) throw new Error(result.error || 'Please try again.')
-      setForm({ name: '', email: '', message: '' })
-      setStatus({ type: 'success', message: 'Message received — Jack will be in touch.' })
-    } catch (error) {
-      setStatus({ type: 'error', message: error instanceof Error ? error.message : 'Something went wrong. Please try again.' })
-    }
+      setForm({ name: '', email: '', message: '' }); setStatus({ type: 'success', message: 'Received — Raj will be in touch.' })
+    } catch (error) { setStatus({ type: 'error', message: error instanceof Error ? error.message : 'Something went wrong.' }) }
   }
-
-  return (
-    <form className="contact-form" onSubmit={handleSubmit}>
-      <div className="contact-form-fields">
-        <label><span>Name</span><input required minLength={2} maxLength={80} value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Your name" autoComplete="name" /></label>
-        <label><span>Email</span><input required type="email" maxLength={254} value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} placeholder="you@example.com" autoComplete="email" /></label>
-      </div>
-      <label><span>Project notes</span><textarea required minLength={10} maxLength={4000} rows={4} value={form.message} onChange={(event) => setForm({ ...form, message: event.target.value })} placeholder="Tell me a little about what you are making…" /></label>
-      <div className="contact-form-footer"><button className="contact-submit" type="submit" disabled={status.type === 'sending'}>{status.type === 'sending' ? 'Sending…' : 'Send inquiry'} <ArrowUpRight size={16} /></button>{status.message && <p className={`contact-status contact-status--${status.type}`} role="status">{status.message}</p>}</div>
-    </form>
-  )
+  return <form className="raj-form" onSubmit={submit}>
+    <div className="raj-form-grid"><label>Name<input required minLength={2} maxLength={80} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Your name" autoComplete="name" /></label><label>Email<input required type="email" maxLength={254} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="you@example.com" autoComplete="email" /></label></div>
+    <label>Project / goal<textarea required minLength={10} maxLength={4000} rows={4} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} placeholder="What are you building?" /></label>
+    <div className="raj-form-bottom"><button className="raj-submit" disabled={status.type === 'sending'}>{status.type === 'sending' ? 'Sending' : 'Start a conversation'} <ArrowUpRight size={16} /></button>{status.message && <span className={`raj-form-status ${status.type}`}>{status.message}</span>}</div>
+  </form>
 }
 
-function AnimatedChar({ char, index, total, progress }: { char: string; index: number; total: number; progress: MotionValue<number> }) {
-  const start = Math.max(0, index / total - 0.12)
-  const end = Math.min(1, index / total + 0.22)
-  const opacity = useTransform(progress, [start, end], [0.2, 1])
-  return <motion.span style={{ opacity }}>{char === ' ' ? '\u00a0' : char}</motion.span>
+function ProjectCard({ project, index }: { project: Project; index: number }) {
+  return <motion.article className={`raj-project-card ${project.live ? 'raj-project-card--live' : ''}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .1 }} transition={{ duration: .55, delay: Math.min(index % 3, 2) * .06 }}>
+    <div className="raj-project-art" style={{ background: project.accent }}><span>{String(project.id).padStart(2, '0')}</span><Sparkles size={19} /></div>
+    <div className="raj-project-info"><div><p className="raj-project-type">{project.type} / {project.category}</p><h3>{project.title}</h3></div>{project.live ? <a href={project.url} target="_blank" rel="noreferrer" className="raj-card-link" aria-label={`Open ${project.title}`}><ExternalLink size={17} /></a> : <span className="raj-private-pill">On request</span>}</div>
+    <p className="raj-project-description">{project.description}</p>
+  </motion.article>
 }
 
-function AnimatedText({ text }: { text: string }) {
-  const ref = useRef<HTMLParagraphElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.8', 'end 0.2'] })
-  return (
-    <p ref={ref} className="animated-copy" aria-label={text}>
-      {text.split('').map((char, index) => <AnimatedChar key={`${char}-${index}`} char={char} index={index} total={text.length} progress={scrollYProgress} />)}
-    </p>
-  )
-}
+function AnimatedStat({ value, label }: { value: string; label: string }) { return <div className="raj-stat"><strong>{value}</strong><span>{label}</span></div> }
 
-function MarqueeSection() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const [offset, setOffset] = useState(0)
-  useEffect(() => {
-    let frame = 0
-    const update = () => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => {
-        const sectionTop = sectionRef.current?.getBoundingClientRect().top ?? 0
-        setOffset((window.scrollY - sectionTop + window.innerHeight) * 0.3)
-      })
-    }
-    update()
-    window.addEventListener('scroll', update, { passive: true })
-    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', update) }
-  }, [])
-  const rows = useMemo(() => [marqueeImages.slice(0, 11), marqueeImages.slice(11)], [])
-  return (
-    <section ref={sectionRef} className="marquee-section" aria-label="Selected motion work">
-      <div className="marquee-intro">
-        <span>Selected motion / 2020 — 2026</span>
-        <span className="marquee-scroll"><MoveDown size={15} /> Scroll to explore</span>
-      </div>
-      <div className="marquee-window">
-        <div className="marquee-row" style={{ transform: `translate3d(${offset - 200}px, 0, 0)` }}>
-          {[...rows[0], ...rows[0], ...rows[0]].map((src, index) => <img key={`top-${src}-${index}`} src={src} alt="Abstract motion design project preview" loading="lazy" />)}
-        </div>
-        <div className="marquee-row" style={{ transform: `translate3d(${-offset + 200}px, 0, 0)` }}>
-          {[...rows[1], ...rows[1], ...rows[1]].map((src, index) => <img key={`bottom-${src}-${index}`} src={src} alt="Abstract motion design project preview" loading="lazy" />)}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function ProjectCard({ project, index }: { project: typeof projects[number]; index: number }) {
-  const cardRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: cardRef, offset: ['start end', 'start start'] })
-  const targetScale = 1 - (projects.length - 1 - index) * 0.03
-  const scale = useTransform(scrollYProgress, [0, 1], [1, targetScale])
-  return (
-    <div className="project-card-wrap" style={{ top: `${index * 28}px` }}>
-      <motion.article ref={cardRef} className="project-card" style={{ scale }}>
-        <div className="project-card-top">
-          <span className="project-number">{project.number}</span>
-          <div className="project-meta">
-            <span className="eyebrow">{project.type} / 3D world</span>
-            <h3>{project.name}</h3>
-            <p>{project.blurb}</p>
-          </div>
-          <LiveProjectButton />
-        </div>
-        <div className="project-gallery">
-          <div className="project-gallery-left">
-            <img src={project.images[0]} alt={`${project.name} project detail one`} loading="lazy" />
-            <img src={project.images[1]} alt={`${project.name} project detail two`} loading="lazy" />
-          </div>
-          <img className="project-gallery-tall" src={project.images[2]} alt={`${project.name} project hero detail`} loading="lazy" />
-        </div>
-      </motion.article>
-    </div>
-  )
-}
-
-function HeroSection() {
-  return (
-    <section id="top" className="hero-section">
-      <nav className="site-nav" aria-label="Main navigation">
-        <a className="wordmark" href="#top">J<span>•</span></a>
-        <div className="nav-links">
-          <a href="#about">About</a>
-          <a href="#services">Price</a>
-          <a href="#projects">Projects</a>
-          <a href="#contact">Contact</a>
-        </div>
-        <span className="nav-index">01 / 05</span>
-      </nav>
-      <div className="hero-title-wrap">
-        <FadeIn y={40} delay={0.15}>
-          <p className="hero-name-tag">JACK / 3D CREATOR</p>
-          <h1 className="hero-heading">Hi, I&apos;m Jack</h1>
-        </FadeIn>
-      </div>
-      <FadeIn delay={0.35} y={20} className="hero-footer">
-        <p>a 3d creator driven by crafting striking and unforgettable projects</p>
-        <span className="hero-scroll-cue"><MoveDown size={16} /> Scroll down</span>
-        <ContactButton />
-      </FadeIn>
-      <FadeIn delay={0.6} y={30} className="hero-portrait">
-        <Magnet><img src={heroPortrait} alt="Jack, 3D creator portrait" /></Magnet>
-      </FadeIn>
-      <div className="hero-orbit orbit-one" />
-      <div className="hero-orbit orbit-two" />
-    </section>
-  )
+function RajHero() {
+  return <section className="raj-hero" id="top">
+    <nav className="raj-nav"><a className="raj-logo" href="#top">R<span>•</span></a><div className="raj-nav-links"><a href="#work">Work</a><a href="#about">About</a><a href="#services">Services</a><a href="#contact">Contact</a></div><a className="raj-nav-social" href="https://instagram.com/udith_29" target="_blank" rel="noreferrer"><Instagram size={15} /> @udith_29</a></nav>
+    <div className="raj-hero-grid"><div className="raj-hero-copy"><p className="raj-eyebrow"><span className="raj-live-dot" /> Independent digital builder / 2026</p><h1>Build<br /><em>bold.</em><br />Stay <span>real.</span></h1><p className="raj-hero-lede">I&apos;m Raj — a 4th year student building websites, apps, and growth systems for people with something worth putting online.</p><div className="raj-hero-actions"><a className="raj-primary" href="#work">Explore 25 projects <ArrowDownRight size={18} /></a><a className="raj-ghost-link" href="#contact">Start a project <ArrowUpRight size={16} /></a></div></div><div className="raj-hero-visual"><div className="raj-visual-orbit raj-visual-orbit-a" /><div className="raj-visual-orbit raj-visual-orbit-b" /><div className="raj-visual-core"><span>RAJ</span><small>APP / WEB / GROWTH</small></div><p className="raj-visual-note">Made in Tirupati<br />built for anywhere.</p><div className="raj-visual-index">01<br /><span>04</span></div></div></div>
+    <div className="raj-hero-bottom"><span>Scroll to enter <MoveDown size={16} /></span><div className="raj-hero-rule" /><span>Design / build / reach</span></div>
+  </section>
 }
 
 function AboutSection() {
-  const copy = "With more than five years of experience in design, i focus on branding, web design, and user experience, i truly enjoy working with businesses that aim to stand out and present their best image. Let's build something incredible together!"
-  return (
-    <section id="about" className="about-section">
-      <FadeIn className="corner-art corner-art-moon" x={-80} delay={0.1} duration={0.9}><img src={cornerArt.moon} alt="3D moon object" loading="lazy" /></FadeIn>
-      <FadeIn className="corner-art corner-art-object" x={-80} delay={0.25} duration={0.9}><img src={cornerArt.object} alt="Abstract 3D object" loading="lazy" /></FadeIn>
-      <FadeIn className="corner-art corner-art-lego" x={80} delay={0.15} duration={0.9}><img src={cornerArt.lego} alt="3D lego icon" loading="lazy" /></FadeIn>
-      <FadeIn className="corner-art corner-art-group" x={80} delay={0.3} duration={0.9}><img src={cornerArt.group} alt="Abstract 3D group" loading="lazy" /></FadeIn>
-      <div className="about-content">
-        <FadeIn y={40}><p className="section-kicker">A little context / 02</p><h2 className="hero-heading section-heading">About me</h2></FadeIn>
-        <AnimatedText text={copy} />
-        <FadeIn delay={0.25} className="about-cta" y={20}><ContactButton /></FadeIn>
-      </div>
-    </section>
-  )
+  const ref = useRef<HTMLElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start .85', 'end .3'] })
+  const x = useTransform(scrollYProgress, [0, 1], [50, 0])
+  return <section ref={ref} id="about" className="raj-about"><div className="raj-section-marker">02 / About Raj</div><motion.div className="raj-about-panel" style={{ x }}><p className="raj-eyebrow">The short version</p><h2>Student mind.<br /><em>Builder energy.</em></h2><p className="raj-about-copy">I&apos;m a 4th year student interested in app and website building, Meta Ads, and reach marketing. I like the space between a strong idea and the moment it actually works — the page, the product, the campaign, and the details people remember.</p><div className="raj-stats"><AnimatedStat value="25" label="projects in the book" /><AnimatedStat value="06" label="live public builds" /><AnimatedStat value="04" label="years learning + shipping" /></div></motion.div><div className="raj-about-aside"><span>Currently open for</span><strong>Websites<br />Apps<br />Growth</strong><a href="https://instagram.com/udith_29" target="_blank" rel="noreferrer">Follow the process <ArrowUpRight size={15} /></a></div></section>
 }
 
 function ServicesSection() {
-  return (
-    <section id="services" className="services-section">
-      <FadeIn y={40} className="services-heading-row"><p className="section-kicker dark-kicker">What I do / 03</p><h2>Services</h2><span className="services-mark"><Sparkles size={18} /> built for bold ideas</span></FadeIn>
-      <div className="services-list">
-        {services.map(([number, name, description], index) => (
-          <FadeIn key={number} delay={index * 0.1} y={20} className="service-item">
-            <span className="service-number">{number}</span>
-            <div><h3>{name}</h3><p>{description}</p></div>
-            <ArrowDownRight className="service-arrow" size={30} strokeWidth={1.2} />
-          </FadeIn>
-        ))}
-      </div>
-    </section>
-  )
+  return <section id="services" className="raj-services"><div className="raj-section-header"><div><p className="raj-eyebrow raj-eyebrow-dark">03 / What I do</p><h2>Useful<br /><em>by design.</em></h2></div><p>Not just screens. I build the thinking around them — from first click to first customer.</p></div><div className="raj-service-list">{services.map(([number, title, description]) => <div className="raj-service-row" key={number}><span>{number}</span><h3>{title}</h3><p>{description}</p><ArrowUpRight className="raj-service-arrow" size={22} /></div>)}</div><div className="raj-comparison"><div className="raj-comparison-heading"><p className="raj-eyebrow raj-eyebrow-dark">Why Raj / the difference</p><h3>More than<br /><em>a pretty launch.</em></h3></div><div className="raj-comparison-table"><div className="raj-comparison-table-head"><span>What matters</span><span>Typical handoff</span><span>Raj&apos;s approach</span></div>{whyUs.map(([matter, typical, raj]) => <div className="raj-comparison-row" key={matter}><strong>{matter}</strong><span>{typical}</span><span>{raj} <Check size={15} /></span></div>)}</div></div></section>
 }
 
-function ProjectsSection() {
-  return (
-    <section id="projects" className="projects-section">
-      <div className="projects-heading-row"><div><p className="section-kicker">Selected work / 04</p><h2 className="hero-heading section-heading">Project</h2></div><p className="projects-note">Scroll through a few worlds shaped from light, material, and movement.</p></div>
-      <div className="projects-stack">{projects.map((project, index) => <ProjectCard key={project.number} project={project} index={index} />)}</div>
-      <footer id="contact" className="site-footer">
-        <div className="footer-intro"><p className="section-kicker">Open for the next good idea / 05</p><h2 className="hero-heading footer-heading">Let&apos;s make<br /><span>something <i>real.</i></span></h2><p className="footer-subcopy">Have a project in mind? Send a few notes and let&apos;s shape the first direction together.</p></div>
-        <div className="footer-actions"><ContactButton compact /><ContactForm /></div>
-        <div className="footer-bottom"><span>© {new Date().getFullYear()} Jack — 3D Creator</span><a href="#top">Back to top <ArrowUpRight size={14} /></a></div>
-      </footer>
-    </section>
-  )
+function WorkSection() {
+  const [filter, setFilter] = useState<'all' | 'live' | 'private'>('all')
+  const visibleProjects = useMemo(() => filter === 'all' ? projects : filter === 'live' ? publicProjects : privateProjects, [filter])
+  return <section id="work" className="raj-work"><div className="raj-section-header raj-work-header"><div><p className="raj-eyebrow">04 / Selected work</p><h2>25 ways<br /><em>to build.</em></h2></div><div className="raj-work-side"><p>Six are live. Nineteen are private builds not listed on the Play Store — shared here as a record of range, not noise.</p><div className="raj-filters">{(['all', 'live', 'private'] as const).map(option => <button key={option} className={filter === option ? 'is-active' : ''} onClick={() => setFilter(option)}>{option === 'all' ? 'All 25' : option === 'live' ? 'Live 06' : 'Private 19'}</button>)}</div></div></div><div className="raj-live-showcase"><div className="raj-live-showcase-label"><span>Live now</span><small>Swipe / drag to explore</small></div><div className="raj-live-showcase-track">{publicProjects.map(project => <a key={project.id} className="raj-live-showcase-card" href={project.url} target="_blank" rel="noreferrer"><span style={{ background: project.accent }} /><div><small>{String(project.id).padStart(2, '0')} / {project.category}</small><strong>{project.title}</strong></div><ExternalLink size={16} /></a>)}</div></div><div className="raj-project-grid">{visibleProjects.map((project, index) => <ProjectCard key={project.id} project={project} index={index} />)}</div></section>
+}
+
+function RajFooter() {
+  return <footer id="contact" className="raj-footer"><div className="raj-footer-top"><div><p className="raj-eyebrow">05 / Let&apos;s make something</p><h2>Have an idea?<br /><em>Let&apos;s build it.</em></h2><div className="raj-footer-links"><a href="https://instagram.com/udith_29" target="_blank" rel="noreferrer"><Instagram size={17} /> @udith_29</a><a href="mailto:hello@rajbuilds.in"><Mail size={17} /> hello@rajbuilds.in</a><span><MapPin size={17} /> Tirupati, India</span></div></div><ContactForm /></div><div className="raj-footer-bottom"><span>© {new Date().getFullYear()} Raj / digital builder</span><a href="#top">Back to top <ArrowUpRight size={14} /></a></div></footer>
 }
 
 function LoadingScreen() {
   const [visible, setVisible] = useState(true)
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => setVisible(false), 1050)
-    return () => window.clearTimeout(timer)
-  }, [])
-
-  return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div className="preloader" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }} aria-hidden="true">
-          <motion.div className="preloader-topline" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }} />
-          <div className="preloader-mark"><span>J</span><i>•</i></div>
-          <div className="preloader-copy"><span>Jack — 3D Creator</span><span>Loading / <strong>00</strong></span></div>
-          <motion.div className="preloader-orbit preloader-orbit-one" animate={{ rotate: 360 }} transition={{ duration: 6, repeat: Infinity, ease: 'linear' }} />
-          <motion.div className="preloader-orbit preloader-orbit-two" animate={{ rotate: -360 }} transition={{ duration: 8, repeat: Infinity, ease: 'linear' }} />
-          <motion.div className="preloader-dot" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.35, duration: 0.45, type: 'spring', stiffness: 180 }} />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  )
+  useEffect(() => { const timer = window.setTimeout(() => setVisible(false), 850); return () => window.clearTimeout(timer) }, [])
+  return <AnimatePresence>{visible && <motion.div className="raj-loader" initial={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .45 }}><div className="raj-loader-ring"><span>R</span></div><p>Raj / building something useful</p><div className="raj-loader-bar" /></motion.div>}</AnimatePresence>
 }
 
 export default function App() {
-  return <><LiquidCursor /><LoadingScreen /><main className="site-shell"><HeroSection /><MarqueeSection /><AboutSection /><ServicesSection /><ProjectsSection /></main></>
+  return <><LiquidCursor /><LoadingScreen /><main className="raj-shell"><RajHero /><AboutSection /><ServicesSection /><WorkSection /><RajFooter /></main></>
 }

@@ -1,27 +1,25 @@
-# Jack — 3D Creator
+# Raj — Digital Builder
 
-## Responsive portfolio experience
-- [x] Deliver a single-page React + TypeScript portfolio with Kanit typography, Tailwind styling, Framer Motion transitions, a dark #0C0C0C visual system, and the confirmed section order.
-- [x] Provide a full-screen hero with working in-page navigation, giant silver-gradient greeting, responsive creator portrait, tagline, and gradient Contact Me CTA.
-- [x] Center Jack’s portrait across mobile and desktop breakpoints and keep the hero name readable above the artwork.
+## Brand and identity
+- [x] Replace the existing Jack portfolio identity with Raj as the site name and digital-builder positioning.
+- [x] Show Instagram handle `@udith_29` as a working external profile link.
+- [x] Update document metadata and the route manifest from Jack to Raj.
 
-## Motion-led showcase sections
-- [x] Render all 21 supplied motion GIFs across two scroll-reactive marquee rows, split 11/10, repeated three times for continuous movement in opposite directions.
-- [x] Implement About me corner art, scroll-driven character reveal copy, and a working contact action.
-- [x] Implement motion-aware FadeIn, magnetic portrait hover, sticky project-card scaling, passive scroll handling, lazy gallery images, and reduced-motion fallbacks.
-- [x] Add a short Framer Motion loading animation that fades into the responsive portfolio on mobile and desktop.
-- [x] Add a liquid cursor that is limited to fine-pointer devices and does not interfere with touch navigation.
-- [x] Add a #B600A8 liquid press ripple for finger taps on touch devices.
+## Portfolio content
+- [x] Show 25 projects in the Work section.
+- [x] Show six supplied public project links: Wonder Events, Event Bid, Eye Trend, Arhuu Outfit, Dharma's Dental, and SLVR Dental & Cosmetic Care.
+- [x] Show the remaining 19 builds as clearly labeled private/unlisted projects with “On request” treatment rather than inventing public links.
+- [x] Include a horizontal live-project showcase plus filters for all 25 projects, the six live projects, and the 19 private projects.
 
-## Services and projects
-- [x] Present the five supplied service offerings in a white rounded-top section with numbered editorial list treatment.
-- [x] Present the three supplied projects with their metadata, Live Project actions, and all nine supplied gallery assets in responsive stacked grids.
+## Positioning and UI
+- [x] Position Raj as a 4th year student interested in app and website building, Meta Ads, and reach marketing.
+- [x] Show seven services: Websites, Apps, Meta Ads, Reach marketing, Automations, Brand systems, and SEO + analytics.
+- [x] Add a “Why Raj” comparison table contrasting a typical handoff with Raj's connected build approach.
+- [x] Build a responsive editorial interface with hero, About, Services, Work, and Contact sections.
+- [x] Preserve the working contact form backend and update its success message from Jack to Raj.
+- [x] Preserve the liquid cursor on fine pointers and the liquid finger-press ripple on touch devices.
 
-## Contact backend
-- [x] Add a responsive contact form with name, email, and message fields, inline validation, loading state, success state, and recoverable error state.
-- [x] Store validated contact submissions in the managed MySQL-compatible database through a server endpoint and expose an unauthenticated health check.
-- [x] Keep auto-publish disabled until the owner explicitly requests publication.
-
-## Delivery plumbing
-- [x] Serve the complete page route manifest at `/manus-routes.json`.
-- [x] Add the server deployment contract and validate frontend and backend paths without publishing automatically.
+## Delivery
+- [x] Keep the current server, database, health endpoint, Dockerfile, and Vercel-ready static/container build configuration intact.
+- [x] Add Vercel-native `/api/contact` and `/api/health` functions so the contact form works on Vercel.
+- [ ] Confirm and complete public deployment to Vercel after the owner approves the exact deployment account/project.
